@@ -1,5 +1,9 @@
+package Version2;
 import java.awt.Color;
-
+/**
+ * @author Fabian Menn 
+ * @version 21.11.2018
+ */
 public class Bar implements Comparable<Bar> {
 	
 	private int length;
@@ -44,3 +48,4 @@ public class Bar implements Comparable<Bar> {
 	}
 
 }
+
