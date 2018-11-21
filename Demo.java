@@ -1,3 +1,4 @@
+package SortAlgo;
 
 import java.awt.Color;
 import sum.kern.*;
@@ -10,11 +11,16 @@ import sum.werkzeuge.*;
  *  - Anzahl an Rechenschritten berechnen
  */
 
+enum Sort 
+{ 
+    quick, selection, insertion, bubble; 
+} 
+
 public class Demo {
 	
 	//int[] len = { 100, 40, 70, 20, 80, 40, 120, 50, 60, 90, 10, 30 };
 
-	Bar[] barArr;
+	private Bar[] barArr;
 
 	private int yPoint, xPoint;
 
@@ -30,6 +36,7 @@ public class Demo {
 		this.yPoint = yPoint;
 		this.xPoint = xPoint;
 
+		
 		createLengths(20);
 
 		placeSortLable(option);
@@ -50,31 +57,28 @@ public class Demo {
 	////////////////**********  INSERTION SORT **********////////////////
 	
 	public void insertionSort(Bar arr[]) {
-		int n = arr.length;
-
+		
 		arr[0].setColor(Color.GREEN);
 
-		for (int i = 1; i < n; ++i) {
-			Bar[] copyArr = dublicateArray(); // new Bar[barArr.length]; System.arraycopy( barArr, 0, copyArr, 0,
-												// barArr.length );
+		for (int i = 1; i < arr.length; ++i) {
+			Bar[] copyArr = dublicateArray(); 
 
-			int key = arr[i].getLength();
-			int j = i - 1;
+			int temp = arr[i].getLength();
+			int j;
 
 			/*
 			 * Move elements of arr[0..i-1], that are greater than key, to one position
 			 * ahead of their current position
 			 */
-			while (j >= 0 && arr[j].getLength() > key) {
+			for (j = i-1; j >= 0 && arr[j].getLength() > temp; j--) {
 				arr[j + 1].setLength(arr[j].getLength());
 				arr[j + 1].setColor(Color.GREEN);
 				arr[j].setColor(Color.RED);
-				j = j - 1;
 				radiereBalken(copyArr);
 				zeichneBalken(arr);
 				meineUhr.warte(50);
 			}
-			arr[j + 1].setLength(key);
+			arr[j + 1].setLength(temp);
 			arr[j + 1].setColor(Color.GREEN);
 
 			radiereBalken(copyArr);
@@ -87,20 +91,19 @@ public class Demo {
 	////////////////**********  SELECTION SORT **********////////////////
 
 	public void selectionSort(Bar[] arr) {
-		int n = arr.length;
-
+		
 		// One by one move boundary of unsorted subarray
-		for (int i = 0; i < n - 1; i++) {
+		for (int i = 0; i < arr.length - 1; i++) {
 			Bar[] copyArr = dublicateArray();
 
 			// Find the minimum element in unsorted array
-			int min_idx = i;
-			for (int j = i + 1; j < n; j++) {
+			int min = i;
+			for (int j = i + 1; j < arr.length; j++) {
 				// copyArr = dublicateArray();
 				arr[j].setColor(Color.BLUE);
-				if (arr[j].getLength() < arr[min_idx].getLength()) {
-					arr[min_idx].setColor(Color.BLACK);
-					min_idx = j;
+				if (arr[j].getLength() < arr[min].getLength()) {
+					arr[min].setColor(Color.BLACK);
+					min = j;
 					arr[j].setColor(Color.RED);
 
 				}
@@ -114,13 +117,13 @@ public class Demo {
 
 			// Swap the found minimum element with the first
 			// element
-			int temp = arr[min_idx].getLength();
-			arr[min_idx].setLength(arr[i].getLength());
+			int temp = arr[min].getLength();
+			arr[min].setLength(arr[i].getLength());
 			arr[i].setLength(temp);
-			arr[min_idx].setColor(Color.BLACK);
+			arr[min].setColor(Color.BLACK);
 			arr[i].setColor(Color.GREEN);
 
-			if (i == n - 2)
+			if (i == arr.length - 2)
 				arr[arr.length - 1].setColor(Color.GREEN);
 
 			radiereBalken(copyArr);
@@ -135,10 +138,9 @@ public class Demo {
 	public void bubbleSort(Bar[] arr) {
 		Bar[] copyArr = dublicateArray();
 
-		int n = arr.length;
-		for (int i = 0; i < n - 1; i++) {
+		for (int i = 0; i < arr.length - 1; i++) {
 
-			for (int j = 0; j < n - i - 1; j++) {
+			for (int j = 0; j < arr.length - i - 1; j++) {
 				copyArr = dublicateArray();
 				arr[j + 1].setColor(Color.RED);
 				if (arr[j].getLength() > arr[j + 1].getLength()) {
@@ -154,9 +156,9 @@ public class Demo {
 				meineUhr.warte(50);
 			}
 
-			arr[n - i - 1].setColor(Color.GREEN);
+			arr[arr.length - i - 1].setColor(Color.GREEN);
 
-			if (i == n - 2)
+			if (i == arr.length - 2)
 				arr[0].setColor(Color.GREEN);
 
 			radiereBalken(copyArr);
@@ -174,7 +176,7 @@ public class Demo {
 	 * correct position in sorted array, and places all smaller (smaller than pivot)
 	 * to left of pivot and all greater elements to right of pivot
 	 */
-	int partition(Bar[] arr, int low, int high) {
+	private int partition(Bar[] arr, int low, int high) {
 		
 		Bar[] copyArr = dublicateArray();
 		
@@ -183,9 +185,6 @@ public class Demo {
 		
 		int i = (low - 1); // index of smaller element
 		for (int j = low; j < high; j++) {
-			
-			
-			
 			
 			// If current element is smaller than or
 			// equal to pivot
@@ -238,15 +237,14 @@ public class Demo {
 			/*
 			 * pi is partitioning index, arr[pi] is now at right place
 			 */
-			int pi = partition(arr, low, high);
-			
-			arr[pi].setColor(Color.GREEN);
+			int pivotIndex = partition(arr, low, high);
+			arr[pivotIndex].setColor(Color.GREEN);
 			
 			// Recursively sort elements before
 			// partition and after partition
-			quickSort(arr, low, pi - 1);
+			quickSort(arr, low, pivotIndex - 1);
 			
-			quickSort(arr, pi + 1, high);
+			quickSort(arr, pivotIndex + 1, high);
 		} else {
 			if (low == high)
 				arr[low].setColor(Color.GREEN);
@@ -270,7 +268,7 @@ public class Demo {
 		// int yPoint = 400;
 
 		for (int i = drawArr.length - 1; i >= 0; i--) {
-			int width = 20;
+			int width = 20;//20;
 			int height = (int) drawArr[i].getLength();
 
 			meinStift.bewegeBis(xPoint + (25 * i), yPoint - height);
@@ -290,7 +288,7 @@ public class Demo {
 		// int yPoint = 400;
 
 		for (int i = copy.length - 1; i >= 0; i--) {
-			int width = 20;
+			int width =  20;
 			int height = (int) copy[i].getLength();
 
 			meinStift.bewegeBis(xPoint + (25 * i), yPoint - height);
@@ -313,7 +311,6 @@ public class Demo {
 			meinStift.schreibeText("Selectionsort");
 		else if (option == Sort.bubble)
 			meinStift.schreibeText("Bubblesort");
-		
 	}
 	
 	

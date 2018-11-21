@@ -1,3 +1,4 @@
+package SortAlgo;
 import java.awt.Color;
 
 public class Bar implements Comparable<Bar> {
